@@ -92,6 +92,19 @@ This project demonstrates two different presigned URL mechanisms, each suited to
 ```
    Server runs on `http://localhost:3000`.
 
+## Testing
+
+This project has no browser UI. All endpoints must be tested via `curl`, Postman, or a similar HTTP client. Opening `http://localhost:3000` directly in a browser will return `404 Not Found`, since there is no route registered for `GET /` — this is expected, not a bug.
+
+Example request:
+```bash
+curl -X POST http://localhost:3000/uploads/request-url \
+  -H "Content-Type: application/json" \
+  -d '{"fileName": "example.jpg", "contentType": "image/jpeg"}'
+```
+
+See the [Endpoints](#endpoints) section below for the full list of available routes and their expected methods/bodies.
+
 ## Endpoints
 
 | Method | Path | Description |
