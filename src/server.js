@@ -191,44 +191,44 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ENDPOINT: request presigned URL buat download
-    // if (req.method === "GET" && req.url.startsWith("/uploads/download-url")) {
-    //     try {
-    //         // ambil query param ?key=... dari URL
-    //         const urlObj = new URL(req.url, "http://localhost:3000");
-    //         const key = urlObj.searchParams.get("key");
+    if (req.method === "GET" && req.url.startsWith("/uploads/download-url")) {
+        try {
+            // ambil query param ?key=... dari URL
+            const urlObj = new URL(req.url, "http://localhost:3000");
+            const key = urlObj.searchParams.get("key");
 
-    //         if (!key) {
-    //             res.writeHead(400, { "Content-Type": "application/json" });
-    //             res.end(JSON.stringify({ error: "Query param 'key' wajib diisi" }));
-    //             return;
-    //         }
+            if (!key) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "Query param 'key' wajib diisi" }));
+                return;
+            }
 
-    //         // pastikan file ini beneran pernah tercatat & sudah confirmed
-    //         const record = uploadRecords.find((r) => r.key === key);
-    //         if (!record || record.status !== "confirmed") {
-    //             res.writeHead(404, { "Content-Type": "application/json" });
-    //             res.end(JSON.stringify({ error: "File tidak ditemukan atau belum dikonfirmasi" }));
-    //             return;
-    //         }
+            // pastikan file ini beneran pernah tercatat & sudah confirmed
+            const record = uploadRecords.find((r) => r.key === key);
+            if (!record || record.status !== "confirmed") {
+                res.writeHead(404, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "File tidak ditemukan atau belum dikonfirmasi" }));
+                return;
+            }
 
-    //         const command = new GetObjectCommand({
-    //             Bucket: BUCKET_NAME,
-    //             Key: key,
-    //         });
+            const command = new GetObjectCommand({
+                Bucket: BUCKET_NAME,
+                Key: key,
+            });
 
-    //         const downloadUrl = await getSignedUrl(s3Client, command, {
-    //             expiresIn: 300,
-    //         });
+            const downloadUrl = await getSignedUrl(s3Client, command, {
+                expiresIn: 300,
+            });
 
-    //         res.writeHead(200, { "Content-Type": "application/json" });
-    //         res.end(JSON.stringify({ downloadUrl }));
-    //     } catch (err) {
-    //         console.error(err);
-    //         res.writeHead(500, { "Content-Type": "application/json" });
-    //         res.end(JSON.stringify({ error: "Gagal generate download URL" }));
-    //     }
-    //     return;
-    // }
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ downloadUrl }));
+        } catch (err) {
+            console.error(err);
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Gagal generate download URL" }));
+        }
+        return;
+    }
     res.writeHead(404);
     res.end("Not Found");
 });
