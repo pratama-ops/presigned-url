@@ -14,6 +14,36 @@ const server = http.createServer(async (req, res) => {
             try {
                 const { fileName, contentType } = JSON.parse(body);
 
+                // VALIDASI 1: fileName wajib ada dan berupa string
+                if (!fileName || typeof fileName !== "string") {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ error: "fileName wajib diisi" }));
+                    return;
+                }
+
+                // VALIDASI 2: whitelist content-type
+                const allowedContentTypes = [
+                    "image/jpeg",
+                    "image/png",
+                    "application/pdf",
+                    "text/plain", // ini buat testing, nanti bisa dihapus di real project
+                ];
+
+                if (!allowedContentTypes.includes(contentType)) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    res.end(
+                        JSON.stringify({
+                            error: `Content-Type tidak diizinkan. Yang diperbolehkan: ${allowedContentTypes.join(", ")}`,
+                        })
+                    );
+                    return;
+                }
+
+                // VALIDASI 3: sanitize fileName 
+                // hapus karakter yang bisa dipakai buat path traversal atau injection
+                // hanya izinkan huruf, angka, titik, strip, underscore
+                const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+
                 // key = A unique path within the bucket to avoid file collisions
                 const key = `uploads/${randomUUID()}-${fileName}`;
 
@@ -31,7 +61,7 @@ const server = http.createServer(async (req, res) => {
                 // catat record dengan status "pending" — belum tentu jadi diupload
                 uploadRecords.push({
                     key,
-                    fileName,
+                    fileName: sanitizedFileName,
                     contentType,
                     status: "pending",
                     createdAt: new Date(),
