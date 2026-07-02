@@ -12,4 +12,4 @@ export const s3Client = new S3Client({
 });
 
 // same bucket name that we make at minIO
-export const BUCKET_NAME = "presigned-demo-bucket";
+export const BUCKET_NAME = "presigned-url-demo";
