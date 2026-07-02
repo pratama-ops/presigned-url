@@ -1,5 +1,5 @@
 import http from "node:http";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client, BUCKET_NAME } from "./s3Client.js";
 import { randomUUID } from "node:crypto";
